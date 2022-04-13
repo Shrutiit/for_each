@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config1" doc:name="HTTP Listener config" doc:id="6a8260b7-ef4f-4fe8-9c33-c712a92aafe3" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="for_eachFlow" doc:id="867b3384-5a57-483a-93f1-b2dde9d42bb8" >
+		<http:listener doc:name="Listener" doc:id="852b4800-cf16-4dbd-8cc4-53b8bcad07fa" config-ref="HTTP_Listener_config1" path="/test"/>
+		<logger level="INFO" doc:name="Logger" doc:id="a343021e-ff68-4b54-8624-d68be96544a2" />
+		<ee:transform doc:name="Transform Message" doc:id="5279ea2a-dbdf-44b5-a13e-1cbd0debc96a" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+[2,5,7,9]]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<set-variable value="#[[]]" doc:name="Set Variable" doc:id="690e89b8-9392-49eb-93d3-5585749bc060" variableName="a"/>
+		<foreach doc:name="For Each" doc:id="e4c781a0-418e-49f6-b54a-f05c1fe80691" collection="#[payload]">
+			<ee:transform doc:name="Transform Message" doc:id="5ca98a32-885c-49ae-9ea4-49764695d9f8" >
+				<ee:message >
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="xyz" ><![CDATA[%dw 2.0
+output application/json
+---
+vars.counter]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+		</foreach>
+		<ee:transform doc:name="Transform Message" doc:id="2cb2cf0a-7be9-4cc4-aa59-99c73bef5e06" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+vars.xyz]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+			</ee:variables>
+		</ee:transform>
+	</flow>
+</mule>
